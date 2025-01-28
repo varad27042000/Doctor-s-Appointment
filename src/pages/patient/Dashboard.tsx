@@ -3,9 +3,11 @@ import { Calendar, Clock, AlertCircle } from 'lucide-react';
 import { MOCK_APPOINTMENTS } from '../../data/mockAppointments';
 import { useAuth } from '../../hooks/useAuth';
 
+
 export function PatientDashboard() {
   const { user } = useAuth();
   const appointments = MOCK_APPOINTMENTS.filter(apt => apt.patientId === user?.id);
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

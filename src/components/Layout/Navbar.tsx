@@ -1,30 +1,59 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { UserCircle2, Menu } from 'lucide-react';
+import { UserCircle2, Menu, Stethoscope, Calendar, Star, ClipboardList, Home } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 export function Navbar() {
   const { user, logout } = useAuth();
 
+  const doctorLinks = [
+    { to: '/doctor/dashboard', icon: ClipboardList, label: 'Dashboard' },
+    { to: '/doctor/reviews', icon: Star, label: 'Reviews' }
+  ];
+
+  const patientLinks = [
+    { to: '/patient/dashboard', icon: Calendar, label: 'My Appointments' },
+    { to: '/patient/medical-history', icon: ClipboardList, label: 'Medical History' }
+  ];
+
+  const navigationLinks = user?.role === 'doctor' ? doctorLinks : patientLinks;
+
   return (
     <nav className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex">
+          <div className="flex items-center">
             <Link to="/" className="flex items-center">
-              <span className="text-xl font-bold text-blue-600">MedBook</span>
+              <Stethoscope className="w-8 h-8 text-blue-600" />
+              <span className="ml-2 text-xl font-bold text-blue-600">MedBook</span>
             </Link>
+
+            {user && (
+              <div className="hidden md:flex ml-10 space-x-8">
+                <Link to="/" className="flex items-center text-gray-700 hover:text-gray-900">
+                  <Home className="w-5 h-5 mr-1" />
+                  Home
+                </Link>
+                {navigationLinks.map(({ to, icon: Icon, label }) => (
+                  <Link
+                    key={to}
+                    to={to}
+                    className="flex items-center text-gray-700 hover:text-gray-900"
+                  >
+                    <Icon className="w-5 h-5 mr-1" />
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center">
             {user ? (
               <div className="flex items-center space-x-4">
-                <Link
-                  to={`/${user.role}/dashboard`}
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  Dashboard
-                </Link>
+                <span className="text-sm text-gray-700">
+                  {user.role === 'doctor' ? ' ' : ''}{user.name}
+                </span>
                 <div className="relative group">
                   <button className="flex items-center space-x-2">
                     <UserCircle2 className="w-8 h-8 text-gray-700" />
@@ -35,7 +64,7 @@ export function Navbar() {
                       to="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      Profile
+                      Profile Settings
                     </Link>
                     <button
                       onClick={logout}
